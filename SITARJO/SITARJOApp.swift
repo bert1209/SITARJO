@@ -11,7 +11,7 @@ import SwiftUI
 struct SITARJOApp: App {
     var body: some Scene {
         WindowGroup {
-            ControlPage()
+            TabBarView()
         }
     }
 }

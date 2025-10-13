@@ -10,9 +10,22 @@
 		05314D732E94EAE30003F107 /* SITARJO.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SITARJO.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		058A43932E9C9B5A0014568D /* Exceptions for "SITARJO" folder in "SITARJO" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 05314D722E94EAE30003F107 /* SITARJO */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		05314D752E94EAE30003F107 /* SITARJO */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				058A43932E9C9B5A0014568D /* Exceptions for "SITARJO" folder in "SITARJO" target */,
+			);
 			path = SITARJO;
 			sourceTree = "<group>";
 		};
@@ -254,6 +267,9 @@
 				DEVELOPMENT_ASSET_PATHS = "\"SITARJO/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SITARJO/Info.plist;
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "We need your location to provide current Weather Info";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location to provide current Weather Info";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -282,6 +298,9 @@
 				DEVELOPMENT_ASSET_PATHS = "\"SITARJO/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SITARJO/Info.plist;
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "We need your location to provide current Weather Info";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location to provide current Weather Info";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

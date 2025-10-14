@@ -14,6 +14,38 @@ struct ControlPage: View {
     @State private var rainIsOn: Bool = false
     @State private var sunIsOn: Bool = false
     @State private var nightIsOn: Bool = false
+    @State private var espData: ESPData?
+    @State private var statusMessage: String = "memuat data.."
+    
+    let apiService = ApiService()
+    
+    func loadData() {
+            apiService.fetchData { result in
+                // Update UI harus di main thread
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(let data):
+                        self.espData = data
+                        self.statusMessage = ""
+                    case .failure(_):
+                        print("eror")
+                        self.statusMessage = "Gagal memuat data: (error.localizedDescription)"
+                    }
+                }
+            }
+        }
+    func sendAction(command: ApiService.Command) {
+        statusMessage = "Mengirim perintah..."
+        apiService.sendAction(command: command) { success, message in
+            self.statusMessage = message
+            if success {
+                // Jika berhasil, refresh data setelah beberapa saat
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    self.loadData()
+                }
+            }
+        }
+    }
     
     var body: some View {
         ScrollView{
@@ -32,7 +64,43 @@ struct ControlPage: View {
                         HStack{
                             Image("petirTarjo")
                             Text("Basic Control")
-                        }.padding(EdgeInsets(top: 25, leading: 34, bottom: 16, trailing: 0))
+                            
+                            Spacer()
+                            
+                            Button(action: {
+                                
+                            }, label: {
+                                ZStack{
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(Color.blue)
+                                        .frame(width: 70, height: 20)
+                                    
+                                    VStack{
+                                        Text("Manual").foregroundStyle(Color.white).font(.system(size: 12)).padding(.top,1)
+                                    }
+                                }
+                                
+                            }
+                            )
+                            
+                            Button(action: {
+                                
+                            }, label: {
+                                ZStack{
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(Color.blue)
+                                        .frame(width: 70, height: 20)
+                                    
+                                    VStack{
+                                        Text("Auto").foregroundStyle(Color.white).font(.system(size: 12)).padding(.top,1)
+                                    }
+                                }
+                                
+                            }
+                            )
+                            
+                            
+                        }.padding(EdgeInsets(top: 25, leading: 34, bottom: 16, trailing: 34))
                         
                         HStack{
                             Text("Current Position").font(.system(size: 14)).foregroundStyle(Color.gray)
@@ -53,7 +121,7 @@ struct ControlPage: View {
                         
                         HStack{
                             Button(action: {
-                                
+                                sendAction(command: .dorong)
                             }, label: {
                                 ZStack{
                                     RoundedRectangle(cornerRadius: 8)
@@ -69,7 +137,7 @@ struct ControlPage: View {
                             }
                             )
                             Button(action: {
-                                
+                                sendAction(command: .tarik)
                             }, label: {
                                 ZStack{
                                     RoundedRectangle(cornerRadius: 8)
@@ -87,73 +155,77 @@ struct ControlPage: View {
                         
                         ZStack(alignment: .topLeading){
                             RoundedRectangle(cornerRadius: 10).fill(Color.abuContainer.opacity(0.5))
-                            
-                            VStack(alignment: .leading){
-                                HStack{
-                                    Text("System Status").font(.system(size: 16))
-                                    Spacer()
-                                    ZStack{
-                                        RoundedRectangle(cornerRadius: 8).fill(Color.abuContainer).stroke(Color.green, lineWidth: 1)
-                                        HStack{
-                                            Image("petirIjoTarjo")
-                                            
-                                            Text("Online").font(.system(size: 12)).foregroundStyle(Color.green)
-                                        }
-                                    }.frame(width: 73, height: 22)
-                                }.padding(.horizontal,16).padding(.top,16)
-                                
-                                HStack{
-                                    VStack(alignment: .leading) {
-                                        VStack(alignment: .leading){
-                                            Text("Censors:").font(.system(size: 14)).foregroundStyle(Color.abuTulisan)
-                                            Text("All Active").font(.system(size: 16))
-                                        }
+                            if let data = espData {
+                                VStack(alignment: .leading){
+                                    HStack{
+                                        Text("System Status").font(.system(size: 16))
                                         Spacer()
-                                        VStack(alignment: .leading) {
-                                            Text("Energy Usage:").font(.system(size: 14)).foregroundStyle(Color.abuTulisan)
-                                            Text("Normal").font(.system(size: 16))
-                                        }
-                                        Spacer()
-                                        VStack(alignment: .leading){
-                                            Text("Status:").font(.system(size: 14)).foregroundStyle(Color.abuTulisan)
-                                            Text("Fully Retracted").font(.system(size: 16))
-                                        }
-                                        Spacer()
-                                        VStack(alignment: .leading) {
-                                            Text("Mode:").font(.system(size: 14)).foregroundStyle(Color.abuTulisan)
-                                            Text("Manual").font(.system(size: 16))
-                                        }
-                                    }
+                                        ZStack{
+                                            RoundedRectangle(cornerRadius: 8).fill(Color.abuContainer).stroke(Color.green, lineWidth: 1)
+                                            HStack{
+                                                Image("petirIjoTarjo")
+                                                
+                                                Text("Online").font(.system(size: 12)).foregroundStyle(Color.green)
+                                            }
+                                        }.frame(width: 73, height: 22)
+                                    }.padding(.horizontal,16).padding(.top,16)
                                     
-                                    Spacer()
-                                    
-                                    VStack(alignment: .leading) {
-                                        VStack(alignment: .leading){
-                                            Text("Auto Actions:").font(.system(size: 14)).foregroundStyle(Color.abuTulisan)
-                                            Text("6 Today").font(.system(size: 16))
-                                        }
-                                        Spacer()
+                                    HStack{
                                         VStack(alignment: .leading) {
-                                            Text("Last Update:").font(.system(size: 14)).foregroundStyle(Color.abuTulisan)
-                                            Text("2 Min Ago").font(.system(size: 16))
-                                        }
-                                        Spacer()
-                                        VStack(alignment: .leading){
-                                            Text("Speed:").font(.system(size: 14)).foregroundStyle(Color.abuTulisan)
-                                            Text("Normal").font(.system(size: 16))
-                                        }
-                                        Spacer()
-                                        VStack(alignment: .leading) {
-                                            Text("Timer:").font(.system(size: 14)).foregroundStyle(Color.abuTulisan)
-                                            Text("Off").font(.system(size: 16))
+                                            VStack(alignment: .leading){
+                                                Text("Censors:").font(.system(size: 14)).foregroundStyle(Color.abuTulisan)
+                                                Text(data.sensors_status).font(.system(size: 16))
+                                            }
+                                            Spacer()
+                                            VStack(alignment: .leading) {
+                                                Text("Energy Usage:").font(.system(size: 14)).foregroundStyle(Color.abuTulisan)
+                                                Text("Normal").font(.system(size: 16))
+                                            }
+                                            Spacer()
+                                            VStack(alignment: .leading){
+                                                Text("Status:").font(.system(size: 14)).foregroundStyle(Color.abuTulisan)
+                                                Text("Fully Retracted").font(.system(size: 16))
+                                            }
+                                            Spacer()
+                                            VStack(alignment: .leading) {
+                                                Text("Mode:").font(.system(size: 14)).foregroundStyle(Color.abuTulisan)
+                                                Text("Manual").font(.system(size: 16))
+                                            }
                                         }
                                         
-                                    }
-                                    Spacer()
-                                }.padding()
+                                        Spacer()
+                                        
+                                        VStack(alignment: .leading) {
+                                            VStack(alignment: .leading){
+                                                Text("Auto Actions:").font(.system(size: 14)).foregroundStyle(Color.abuTulisan)
+                                                Text("6 Today").font(.system(size: 16))
+                                            }
+                                            Spacer()
+                                            VStack(alignment: .leading) {
+                                                Text("Last Update:").font(.system(size: 14)).foregroundStyle(Color.abuTulisan)
+                                                Text("2 Min Ago").font(.system(size: 16))
+                                            }
+                                            Spacer()
+                                            VStack(alignment: .leading){
+                                                Text("Speed:").font(.system(size: 14)).foregroundStyle(Color.abuTulisan)
+                                                Text("Normal").font(.system(size: 16))
+                                            }
+                                            Spacer()
+                                            VStack(alignment: .leading) {
+                                                Text("Timer:").font(.system(size: 14)).foregroundStyle(Color.abuTulisan)
+                                                Text("Off").font(.system(size: 16))
+                                            }
+                                            
+                                        }
+                                        Spacer()
+                                    }.padding()
+                                }
+                            } else{
+                                Text(statusMessage)
                             }
                             
                         }.padding(.horizontal,34).padding(.top,96).frame(height: 172)
+                        
                     }
                     
                 }.frame(height: 525)
@@ -217,6 +289,7 @@ struct ControlPage: View {
                 
             }.padding(.horizontal,16)
                 .padding(.vertical,14)
+                .onAppear(perform: loadData)
         }.background(Color.abuKecil).padding(.top)
     }
 }

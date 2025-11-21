@@ -20,7 +20,7 @@ struct SegmentedView: View {
                 
                 Picker("Pilih tampilan", selection: $selectedSegment){
                     Text("Overview").tag(0)
-                    Text("Temprature").tag(1)
+                    Text("Temperature").tag(1)
                     Text("Weather").tag(2)
                 }
                 .pickerStyle(.segmented)

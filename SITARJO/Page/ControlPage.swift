@@ -15,9 +15,10 @@ struct ControlPage: View {
     @State private var sunIsOn: Bool = false
     @State private var nightIsOn: Bool = false
     @State private var espData: ESPData?
-    @State private var statusMessage: String = "memuat data.."
+    @State private var statusMessage: String = "Loading Data.."
+    @State private var isChangingMode: Bool = false
     
-    let apiService = ApiService()
+    let apiService = ApiService.shared
     
     func loadData() {
             apiService.fetchData { result in
@@ -29,11 +30,13 @@ struct ControlPage: View {
                         self.statusMessage = ""
                     case .failure(_):
                         print("eror")
-                        self.statusMessage = "Gagal memuat data: (error.localizedDescription)"
+                        self.statusMessage = "Loading Data"
                     }
                 }
             }
         }
+
+    
     func sendAction(command: ApiService.Command) {
         statusMessage = "Mengirim perintah..."
         apiService.sendAction(command: command) { success, message in
@@ -46,6 +49,24 @@ struct ControlPage: View {
             }
         }
     }
+    
+    func changeMode(to newMode: ApiService.ControlMode) {
+            self.statusMessage = "Mengubah mode ke \(newMode.rawValue)..."
+            
+        apiService.setMode(mode: newMode) { success, message in
+                self.statusMessage = message
+                
+                // Jika sukses, panggil loadData() lagi
+                // untuk me-refresh UI dengan status mode terbaru
+                if success {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                        self.loadData()
+                    }
+                } else {
+                    print("TIDAK SUKSES")
+                }
+            }
+        }
     
     var body: some View {
         ScrollView{
@@ -60,102 +81,103 @@ struct ControlPage: View {
                 
                 ZStack(alignment: .topLeading){
                     RoundedRectangle(cornerRadius: 14).stroke(Color.stroke, lineWidth: 1.11).fill(Color.white)
-                    VStack(alignment: .leading){
-                        HStack{
-                            Image("petirTarjo")
-                            Text("Basic Control")
-                            
-                            Spacer()
-                            
-                            Button(action: {
+                    if let data = espData {
+                        VStack(alignment: .leading){
+                            HStack{
+                                Image("petirTarjo")
+                                Text("Basic Control")
                                 
-                            }, label: {
-                                ZStack{
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .fill(Color.blue)
-                                        .frame(width: 70, height: 20)
+                                Spacer()
+                                
+                                Button(action: {
+                                    self.changeMode(to: .manual)
+                                }, label: {
+                                    ZStack{
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .fill(Color.blue)
+                                            .frame(width: 70, height: 20)
+                                        
+                                        VStack{
+                                            Text("Manual").foregroundStyle(Color.white).font(.system(size: 12)).padding(.top,1)
+                                        }
+                                    }
                                     
-                                    VStack{
-                                        Text("Manual").foregroundStyle(Color.white).font(.system(size: 12)).padding(.top,1)
-                                    }
                                 }
+                                )
                                 
-                            }
-                            )
-                            
-                            Button(action: {
-                                
-                            }, label: {
-                                ZStack{
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .fill(Color.blue)
-                                        .frame(width: 70, height: 20)
+                                Button(action: {
+                                    self.changeMode(to: .smartAuto)
+                                }, label: {
+                                    ZStack{
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .fill(Color.blue)
+                                            .frame(width: 70, height: 20)
+                                        
+                                        VStack{
+                                            Text("Auto").foregroundStyle(Color.white).font(.system(size: 12)).padding(.top,1)
+                                        }
+                                    }
                                     
-                                    VStack{
-                                        Text("Auto").foregroundStyle(Color.white).font(.system(size: 12)).padding(.top,1)
-                                    }
                                 }
+                                )
                                 
-                            }
-                            )
+                                
+                            }.padding(EdgeInsets(top: 25, leading: 34, bottom: 16, trailing: 34))
+                            
+                            HStack{
+                                Text("Current Position").font(.system(size: 14)).foregroundStyle(Color.gray)
+                                Spacer()
+                                Text("0%").font(.system(size: 14)).foregroundStyle(Color.gray)
+                            }.padding(EdgeInsets(top: 0, leading: 34, bottom: 0, trailing: 34))
                             
                             
-                        }.padding(EdgeInsets(top: 25, leading: 34, bottom: 16, trailing: 34))
-                        
-                        HStack{
-                            Text("Current Position").font(.system(size: 14)).foregroundStyle(Color.gray)
-                            Spacer()
-                            Text("0%").font(.system(size: 14)).foregroundStyle(Color.gray)
-                        }.padding(EdgeInsets(top: 0, leading: 34, bottom: 0, trailing: 34))
-                        
-                        
-                        ZStack(alignment: .leading){
-                            Rectangle()
-                                .fill(Color.biruProgress.opacity(0.2))
-                                .frame(height: 12)
+                            ZStack(alignment: .leading){
+                                Rectangle()
+                                    .fill(Color.biruProgress.opacity(0.2))
+                                    .frame(height: 12)
+                                
+                                Rectangle()
+                                    .fill(Color.biruProgress)
+                                    .frame(width: progress ,height: 10)
+                            }.padding(.horizontal,34)
                             
-                            Rectangle()
-                                .fill(Color.biruProgress)
-                                .frame(width: progress ,height: 10)
-                        }.padding(.horizontal,34)
-                        
-                        HStack{
-                            Button(action: {
-                                sendAction(command: .dorong)
-                            }, label: {
-                                ZStack{
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .fill(Color.blue)
-                                        .frame(height: 80)
+                            HStack{
+                                Button(action: {
+                                    sendAction(command: .dorong)
+                                }, label: {
+                                    ZStack{
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .fill(Color.blue)
+                                            .frame(height: 80)
+                                        
+                                        VStack{
+                                            Image(systemName: "play").foregroundStyle(Color.white).font(.system(size: 20))
+                                            Text("Extend").foregroundStyle(Color.white).font(.system(size: 12)).padding(.top,1)
+                                        }
+                                    }
                                     
-                                    VStack{
-                                        Image(systemName: "play").foregroundStyle(Color.white).font(.system(size: 20))
-                                        Text("Extend").foregroundStyle(Color.white).font(.system(size: 12)).padding(.top,1)
-                                    }
                                 }
-                                
-                            }
-                            )
-                            Button(action: {
-                                sendAction(command: .tarik)
-                            }, label: {
-                                ZStack{
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .fill(Color.blue)
-                                        .frame(height: 80)
-                                    VStack{
-                                        Image(systemName: "arrow.trianglehead.counterclockwise").foregroundStyle(Color.white)
-                                        Text("Retract").foregroundStyle(Color.white).font(.system(size: 12)).padding(.top,1)
+                                )
+                                Button(action: {
+                                    sendAction(command: .tarik)
+                                }, label: {
+                                    ZStack{
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .fill(Color.blue)
+                                            .frame(height: 80)
+                                        VStack{
+                                            Image(systemName: "arrow.trianglehead.counterclockwise").foregroundStyle(Color.white)
+                                            Text("Retract").foregroundStyle(Color.white).font(.system(size: 12)).padding(.top,1)
+                                        }
                                     }
+                                    
                                 }
-                                
-                            }
-                            )
-                        }.padding(.horizontal,34).padding(.top,16)
-                        
-                        ZStack(alignment: .topLeading){
-                            RoundedRectangle(cornerRadius: 10).fill(Color.abuContainer.opacity(0.5))
-                            if let data = espData {
+                                )
+                            }.padding(.horizontal,34).padding(.top,16)
+                            
+                            ZStack(alignment: .topLeading){
+                                RoundedRectangle(cornerRadius: 10).fill(Color.abuContainer.opacity(0.5))
+                                //                            if let data = espData {
                                 VStack(alignment: .leading){
                                     HStack{
                                         Text("System Status").font(.system(size: 16))
@@ -184,12 +206,12 @@ struct ControlPage: View {
                                             Spacer()
                                             VStack(alignment: .leading){
                                                 Text("Status:").font(.system(size: 14)).foregroundStyle(Color.abuTulisan)
-                                                Text("Fully Retracted").font(.system(size: 16))
+                                                Text(data.status).font(.system(size: 16))
                                             }
                                             Spacer()
                                             VStack(alignment: .leading) {
                                                 Text("Mode:").font(.system(size: 14)).foregroundStyle(Color.abuTulisan)
-                                                Text("Manual").font(.system(size: 16))
+                                                Text(data.mode).font(.system(size: 16))
                                             }
                                         }
                                         
@@ -198,12 +220,12 @@ struct ControlPage: View {
                                         VStack(alignment: .leading) {
                                             VStack(alignment: .leading){
                                                 Text("Auto Actions:").font(.system(size: 14)).foregroundStyle(Color.abuTulisan)
-                                                Text("6 Today").font(.system(size: 16))
+                                                Text(String(format: "%.d Today", data.auto_actions_today)).font(.system(size: 16))
                                             }
                                             Spacer()
                                             VStack(alignment: .leading) {
                                                 Text("Last Update:").font(.system(size: 14)).foregroundStyle(Color.abuTulisan)
-                                                Text("2 Min Ago").font(.system(size: 16))
+                                                Text(data.last_update).font(.system(size: 16))
                                             }
                                             Spacer()
                                             VStack(alignment: .leading){
@@ -220,12 +242,33 @@ struct ControlPage: View {
                                         Spacer()
                                     }.padding()
                                 }
-                            } else{
-                                Text(statusMessage)
-                            }
+                                //                             else{
+                                //                                HStack(alignment: .center){
+                                //                                    Spacer()
+                                //                                    VStack(alignment: .leading){
+                                //                                        Spacer()
+                                ////                                        CircularProgressViewStyle()
+                                //                                        Text(statusMessage)
+                                //                                        Spacer()
+                                //                                    }.frame(width: .infinity)
+                                //                                    Spacer()
+                                //                                }
+                                //                            }
+                                
+                            }.padding(.horizontal,34).padding(.top,96).frame(height: 172)
                             
-                        }.padding(.horizontal,34).padding(.top,96).frame(height: 172)
-                        
+                        }
+                    } else{
+                        HStack(alignment: .center){
+                            Spacer()
+                            VStack(alignment: .leading){
+                                Spacer()
+//                              CircularProgressViewStyle()
+                                ProgressView(statusMessage)
+                                Spacer()
+                            }
+                            Spacer()
+                        }
                     }
                     
                 }.frame(height: 525)

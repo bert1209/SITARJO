@@ -12,45 +12,26 @@ struct WeatherENV: View {
     
     @State private var coolTempIsOn: Bool = false
     @StateObject private var locationManager = LocationManager()
-    @State private var weatherData: WeatherData?
+//    @State private var weatherData: WeatherData?
+    @StateObject private var weatherService = WeatherService.shared
     
-    private func fetchWeatherData(for location :CLLocation){
-        let apiKey = "99229bff95270ae2fa6829889ca0e524"
-        print(location.coordinate.latitude)
-        print(location.coordinate.longitude)
-//        let urlString = "https://api.openweathermap.org/data/2.5/weather?lat=\(location.coordinate.latitude)&lon=\(location.coordinate.longitude)&appid=\(apiKey)&units=metric" //ambil sesuai kordinat hp
-        let urlString = "https://api.openweathermap.org/data/2.5/weather?q=Jakarta&appid=\(apiKey)&units=metric"
-        guard let url = URL(string: urlString) else {return} // ambil wilayah Jakarta
-        
-        URLSession.shared.dataTask(with: url) {data, _ , error in
-            guard let data = data else {return}
-            
-            do {
-                let decoder = JSONDecoder()
-                let weatherResponse = try
-                decoder.decode(WeatherResponse.self, from: data)
-                
-                DispatchQueue.main.async{
-                    weatherData  = WeatherData(locationName: weatherResponse.name, temperature: weatherResponse.main.temp, condition: weatherResponse.weather.first?.description ?? "", humiditys: weatherResponse.main.humidity, winds: weatherResponse.wind.speed)
-                }
-            } catch {
-                print(error.localizedDescription)
-            }
-        }.resume()
-    }
     
     var body: some View {
         ZStack(alignment: .topLeading){
             Color.abuKecil
                 VStack(alignment: .leading){
-                    if let weatherData = weatherData {
+                    if let weatherData = weatherService.weatherData,
+                       let oneCallData = weatherService.oneCallData{
                         ZStack(alignment: .topLeading){
                             RoundedRectangle(cornerRadius: 10).stroke(Color.stroke, lineWidth: 2).fill(Color.white)
                             VStack(alignment: .leading){
+                            
+            
                                 HStack{
                                     Image(systemName: "cloud").foregroundStyle(Color.gray)
                                     Text("Weather Control").font(.system(size: 16))
                                 }.padding(.horizontal,16).padding(.top,16)
+                        
                                 HStack{
                                     VStack(alignment: .leading) {
                                         VStack(alignment: .leading){
@@ -58,13 +39,14 @@ struct WeatherENV: View {
                                                 Image(systemName: "thermometer.variable").foregroundStyle(Color.orange)
                                                 Text("Temprature:").font(.system(size: 14)).foregroundStyle(Color.abuTulisan)
                                             }
+                    
                                             Text("\(Int(weatherData.temperature))°C").font(.system(size: 24)).foregroundStyle(Color.black).fontWeight(.bold)
                                         }
-                                        //                                Spacer()
+    //                                    Spacer()
                                         VStack(alignment: .leading){
                                             HStack{
                                                 Image("wind").foregroundStyle(Color.orange)
-                                                Text("Wind Speed:").font(.system(size: 14)).foregroundStyle(Color.abuTulisan)
+                                                Text("Wind Speed").font(.system(size: 14)).foregroundStyle(Color.abuTulisan)
                                             }
                                             Text("\(Int(weatherData.winds)) km/h").font(.system(size: 24)).foregroundStyle(Color.black).fontWeight(.bold)
                                         }
@@ -78,20 +60,22 @@ struct WeatherENV: View {
                                                 Image(systemName: "drop.degreesign").foregroundStyle(Color.blue)
                                                 Text("Humidity:").font(.system(size: 14)).foregroundStyle(Color.abuTulisan)
                                             }
+                                           
                                             Text("\(Int(weatherData.humiditys))%").font(.system(size: 24)).foregroundStyle(Color.black).fontWeight(.bold)
                                         }
-                                        //                                Spacer()
+                        
                                         VStack(alignment: .leading){
                                             HStack{
                                                 Image(systemName: "cloud.heavyrain").foregroundStyle(Color.gray)
                                                 Text("Rain Chance:").font(.system(size: 14)).foregroundStyle(Color.abuTulisan)
                                             }
-                                            Text("20%").font(.system(size: 24)).foregroundStyle(Color.black).fontWeight(.bold)
+                                         
+                                            Text("\(Int(oneCallData.hour1Forecast.rainChance * 100))%").font(.system(size: 24)).foregroundStyle(Color.black).fontWeight(.bold).padding(.top,1)
                                         }.padding(.top,1)
+                                        
+                                        
                                     }
-                                    
                                     Spacer()
-                                    
                                 }.padding()
                                 
                                 Spacer()
@@ -107,8 +91,8 @@ struct WeatherENV: View {
                                         Spacer()
                                         ZStack{
                                             RoundedRectangle(cornerRadius: 14).fill(Color.blue)
-                                            Text("6/10").font(.system(size: 14)).foregroundStyle(Color.white)
-                                        }.frame(width: 42, height: 22)
+                                            Text("\(String(format: "%.1f", oneCallData.uvIndex/10))/10").font(.system(size: 14)).foregroundStyle(Color.white)
+                                        }.frame(width: 50, height: 22)
                                     }.padding()
                                     
                                 }.padding(.horizontal,16).padding(.top,8).frame(height: 60)
@@ -122,27 +106,39 @@ struct WeatherENV: View {
                                     ZStack{
                                         RoundedRectangle(cornerRadius: 10).fill(Color.abuContainer.opacity(0.5))
                                         VStack{
-                                            Text("11:00").font(.system(size: 12)).foregroundStyle(Color.abuTulisan)
-                                            Image("sun")
-                                            Text("23°C").font(.system(size: 12))
+                                            Spacer()
+                                            Text(formatTime(oneCallData.hour1Forecast.time)).font(.system(size: 12)).foregroundStyle(Color.abuTulisan)
+                                            Spacer()
+                                            Image(systemName: getWeatherIcon(for: oneCallData.hour1Forecast.condition)).foregroundStyle(getWeatherIconColor(for: oneCallData.hour1Forecast.condition))
+                                            Spacer()
+                                            Text("\(Int(oneCallData.hour1Forecast.temperature))°C").font(.system(size: 12))
+                                            Spacer()
                                         }
                                     }.frame(width: 110, height: 72)
                                     Spacer()
                                     ZStack{
                                         RoundedRectangle(cornerRadius: 10).fill(Color.abuContainer.opacity(0.5))
                                         VStack{
-                                            Text("12:00").font(.system(size: 12)).foregroundStyle(Color.abuTulisan)
-                                            Image(systemName: "cloud").padding(.vertical,1).foregroundStyle(Color.gray)
-                                            Text("24°C").font(.system(size: 12))
+                                            Spacer()
+                                            Text(formatTime(oneCallData.hour2Forecast.time)).font(.system(size: 12)).foregroundStyle(Color.abuTulisan)
+                                            Spacer()
+                                            Image(systemName: getWeatherIcon(for: oneCallData.hour2Forecast.condition)).foregroundStyle(getWeatherIconColor(for: oneCallData.hour2Forecast.condition))
+                                            Spacer()
+                                            Text("\(Int(oneCallData.hour2Forecast.temperature))°C").font(.system(size: 12))
+                                            Spacer()
                                         }
                                     }.frame(width: 110, height: 72)
                                     Spacer()
                                     ZStack{
                                         RoundedRectangle(cornerRadius: 10).fill(Color.abuContainer.opacity(0.5))
                                         VStack{
-                                            Text("13:00").font(.system(size: 12)).foregroundStyle(Color.abuTulisan)
-                                            Image(systemName: "cloud.heavyrain").padding(.vertical,1).foregroundStyle(Color.blue)
-                                            Text("21°C").font(.system(size: 12))
+                                            Spacer()
+                                            Text(formatTime(oneCallData.hour3Forecast.time)).font(.system(size: 12)).foregroundStyle(Color.abuTulisan)
+                                            Spacer()
+                                            Image(systemName: getWeatherIcon(for: oneCallData.hour3Forecast.condition)).foregroundStyle(getWeatherIconColor(for: oneCallData.hour3Forecast.condition))
+                                            Spacer()
+                                            Text("\(Int(oneCallData.hour3Forecast.temperature))°C").font(.system(size: 12))
+                                            Spacer()
                                         }
                                     }.frame(width: 110, height: 72)
                                     Spacer()
@@ -170,17 +166,71 @@ struct WeatherENV: View {
                             }
                             
                         }.frame(height: 580)
+                    } else if weatherService.isLoading {
+                        HStack {
+                            Spacer()
+                            ProgressView("Loading weather data...")
+                            Spacer()
+                        }.padding()
+                    } else if let error = weatherService.errorMessage {
+                        Text("Error: \(error)")
+                            .foregroundStyle(Color.red)
+                            .padding()
                     }
-                }.padding(.top,20)
+                }.padding(.top,10)
                 .onAppear{
                     locationManager.requestLocation()
                 }
                 .onReceive(locationManager.$location) {location in
                     guard let location = location else {return}
-                    fetchWeatherData(for: location)
+                    weatherService.fetchAllWeatherData(for: location)
                 }
             }
         }
+    
+    private func formatTime(_ date: Date) -> String {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "HH:mm"
+            return formatter.string(from: date)
+        }
+        
+    private func getWeatherIcon(for condition: String) -> String {
+        let lowercased = condition.lowercased()
+        
+        if lowercased.contains("rain") {
+            return "cloud.rain.fill"
+        } else if lowercased.contains("cloud") {
+            return "cloud"
+        } else if lowercased.contains("clear") {
+            return "sun.max.fill"
+        } else if lowercased.contains("thunder") || lowercased.contains("storm") {
+            return "cloud.bolt.rain.fill"
+        } else if lowercased.contains("snow") {
+            return "cloud.snow.fill"
+        } else {
+            return "cloud.sun.fill"
+        }
+    }
+        
+    private func getWeatherIconColor(for condition: String) -> Color {
+        let lowercased = condition.lowercased()
+        
+        if lowercased.contains("rain") {
+            return .blue
+        } else if lowercased.contains("cloud") {
+            return .gray
+        } else if lowercased.contains("clear") {
+            return .yellow
+        } else if lowercased.contains("thunder") || lowercased.contains("storm") {
+            return .gray
+        } else if lowercased.contains("snow") {
+            return .white
+        } else {
+            return .gray
+        }
+    }
+    
+    
 }
 
 #Preview {

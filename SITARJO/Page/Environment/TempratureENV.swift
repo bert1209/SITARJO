@@ -10,37 +10,41 @@ import CoreLocation
 
 struct TempratureENV: View {
     
-    @State var sliderValue: Double = 10
+    @State var sliderValue: Double = 20
     @State private var highTempIsOn: Bool = false
     @State private var coolTempIsOn: Bool = false
     @StateObject private var locationManager = LocationManager()
-    @State private var weatherData: WeatherData?
+    @StateObject private var weatherService = WeatherService.shared
+    @State private var statusMessage: String = ""
     
+    private let apiService = ApiService.shared
     
-    private func fetchWeatherData(for location :CLLocation){
-        let apiKey = "99229bff95270ae2fa6829889ca0e524"
-        print(location.coordinate.latitude)
-        print(location.coordinate.longitude)
-//        let urlString = "https://api.openweathermap.org/data/2.5/weather?lat=\(location.coordinate.latitude)&lon=\(location.coordinate.longitude)&appid=\(apiKey)&units=metric" //ambil sesuai kordinat hp
-        let urlString = "https://api.openweathermap.org/data/2.5/weather?q=Jakarta&appid=\(apiKey)&units=metric"
-        guard let url = URL(string: urlString) else {return} // ambil wilayah Jakarta
-        
-        URLSession.shared.dataTask(with: url) {data, _ , error in
-            guard let data = data else {return}
+    func sendSuhuUpdate() {
+        let suhuInt = Int(sliderValue)
+            statusMessage = "Mengirim \(suhuInt)°C..."
             
-            do {
-                let decoder = JSONDecoder()
-                let weatherResponse = try
-                decoder.decode(WeatherResponse.self, from: data)
-                
-                DispatchQueue.main.async{
-                    weatherData  = WeatherData(locationName: weatherResponse.name, temperature: weatherResponse.main.temp, condition: weatherResponse.weather.first?.description ?? "", humiditys: weatherResponse.main.humidity, winds: weatherResponse.wind.speed)
+            apiService.setSuhuThreshold(suhu: suhuInt) { success, message in
+                if success {
+                    statusMessage = "Berhasil: \(message)"
+                } else {
+                    statusMessage = "Gagal: \(message)"
                 }
-            } catch {
-                print(error.localizedDescription)
             }
-        }.resume()
-    }
+        }
+        
+        func loadSettings() {
+            // Anda perlu fungsi fetchData() di ApiService
+            // yang mengembalikan DeviceData
+            apiService.fetchData { result in
+                switch result {
+                case .success(let data):
+                    self.sliderValue = Double(data.suhu_minimal)
+                case .failure(let error):
+                    statusMessage = "Gagal memuat pengaturan: \(error.localizedDescription)"
+                }
+            }
+            
+        }
     
     var body: some View {
         ZStack(alignment: .topLeading){
@@ -49,7 +53,7 @@ struct TempratureENV: View {
                 ZStack(alignment: .topLeading){
                     RoundedRectangle(cornerRadius: 10).stroke(Color.stroke, lineWidth: 1).fill(Color.white)
                     VStack(alignment: .leading){
-                        if let weatherData = weatherData {
+                        if let weatherData = weatherService.weatherData {
                             HStack{
                                 Image(systemName: "thermometer.variable").foregroundStyle(Color.orange)
                                 Text("Temperature Control").font(.system(size: 16))
@@ -72,7 +76,12 @@ struct TempratureENV: View {
                                 Text(String(format: "%.1f°C", sliderValue)).font(.system(size: 14))
                             }.padding(.horizontal,16).padding(.top,16)
                             
-                            Slider(value: $sliderValue, in: 0...50)
+                            Slider(value: $sliderValue, in: 0...50,
+                                   onEditingChanged: { isEditing in
+                                if !isEditing {
+                                    sendSuhuUpdate()
+                                }
+                            })
                                 .padding(.horizontal,16)
                             Text("Clothesline will automatically retract when temperature exceeds this value").foregroundStyle(Color.abuTulisan).font(.system(size: 12)).padding(.horizontal,16)
                             
@@ -126,17 +135,27 @@ struct TempratureENV: View {
                                 
                             }.padding(.horizontal,16).padding(.top,8).frame(height: 142)
                             
+                        } else if weatherService.isLoading {
+                            HStack {
+                                Spacer()
+                                ProgressView("Loading weather data...")
+                                Spacer()
+                            }.padding()
+                        } else if let error = weatherService.errorMessage {
+                            Text("Error: \(error)")
+                                .foregroundStyle(Color.red)
+                                .padding()
                         }
                     }.onAppear{
                         locationManager.requestLocation()
                     }
                     .onReceive(locationManager.$location) {location in
                         guard let location = location else {return}
-                        fetchWeatherData(for: location)
+                        weatherService.fetchWeatherDataForJakarta()
                     }
                     
                 }.frame(height: 570)
-            }.padding(.top,20)
+            }.padding(.top,10)
         }
       
     }

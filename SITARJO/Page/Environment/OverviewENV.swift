@@ -14,31 +14,7 @@ struct OverviewENV: View {
     @State private var rainIsOn: Bool = false
     @StateObject private var locationManager = LocationManager()
     @State private var weatherData: WeatherData?
-    
-    private func fetchWeatherData(for location :CLLocation){
-        let apiKey = "99229bff95270ae2fa6829889ca0e524"
-        print(location.coordinate.latitude)
-        print(location.coordinate.longitude)
-//        let urlString = "https://api.openweathermap.org/data/2.5/weather?lat=\(location.coordinate.latitude)&lon=\(location.coordinate.longitude)&appid=\(apiKey)&units=metric" //ambil sesuai kordinat hp
-        let urlString = "https://api.openweathermap.org/data/2.5/weather?q=Jakarta&appid=\(apiKey)&units=metric"
-        guard let url = URL(string: urlString) else {return} // ambil wilayah Jakarta
-        
-        URLSession.shared.dataTask(with: url) {data, _ , error in
-            guard let data = data else {return}
-            
-            do {
-                let decoder = JSONDecoder()
-                let weatherResponse = try
-                decoder.decode(WeatherResponse.self, from: data)
-                
-                DispatchQueue.main.async{
-                    weatherData  = WeatherData(locationName: weatherResponse.name, temperature: weatherResponse.main.temp, condition: weatherResponse.weather.first?.description ?? "", humiditys: weatherResponse.main.humidity, winds: weatherResponse.wind.speed)
-                }
-            } catch {
-                print(error.localizedDescription)
-            }
-        }.resume()
-    }
+    @StateObject private var weatherService = WeatherService.shared
     
     var body: some View {
         ZStack(alignment: .topLeading){
@@ -47,7 +23,8 @@ struct OverviewENV: View {
                 ZStack(alignment: .topLeading){
                     RoundedRectangle(cornerRadius: 10).stroke(Color.stroke, lineWidth: 1).fill(Color.white)
                     VStack(alignment: .leading){
-                        if let weatherData = weatherData {
+                        if let weatherData = weatherService.weatherData,
+                           let oneCallData = weatherService.oneCallData{
                             HStack{
                                 Image(systemName: "powermeter").foregroundStyle(Color.blue)
                                 Text("Current Condition").font(.system(size: 16))
@@ -60,14 +37,16 @@ struct OverviewENV: View {
                                             Image(systemName: "thermometer.variable").foregroundStyle(Color.orange)
                                             Text("Temprature:").font(.system(size: 14)).foregroundStyle(Color.abuTulisan)
                                         }
+                                        Spacer()
                                         Text("\(Int(weatherData.temperature))°C").font(.system(size: 24)).foregroundStyle(Color.black).fontWeight(.bold)
                                     }
-                                    Spacer()
+//                                    Spacer()
                                     VStack(alignment: .leading){
                                         HStack{
                                             Image("wind").foregroundStyle(Color.orange)
                                             Text("Wind Speed").font(.system(size: 14)).foregroundStyle(Color.abuTulisan)
                                         }
+                                        Spacer()
                                         Text("\(Int(weatherData.winds)) km/h").font(.system(size: 24)).foregroundStyle(Color.black).fontWeight(.bold)
                                     }
                                 }
@@ -80,6 +59,7 @@ struct OverviewENV: View {
                                             Image(systemName: "drop.degreesign").foregroundStyle(Color.blue)
                                             Text("Humidity:").font(.system(size: 14)).foregroundStyle(Color.abuTulisan)
                                         }
+                                        Spacer()
                                         Text("\(Int(weatherData.humiditys))%").font(.system(size: 24)).foregroundStyle(Color.black).fontWeight(.bold)
                                     }
                                     Spacer()
@@ -88,20 +68,31 @@ struct OverviewENV: View {
                                             Image(systemName: "cloud.heavyrain").foregroundStyle(Color.gray)
                                             Text("Rain Chance:").font(.system(size: 14)).foregroundStyle(Color.abuTulisan)
                                         }
-                                        Text("20%").font(.system(size: 24)).foregroundStyle(Color.black).fontWeight(.bold)
+                                        Spacer()
+                                        Text("\(Int(oneCallData.hour1Forecast.rainChance * 100))%").font(.system(size: 24)).foregroundStyle(Color.black).fontWeight(.bold)
                                     }
                                     
                                     
                                 }
                                 Spacer()
                             }.padding()
+                        } else if weatherService.isLoading {
+                            HStack {
+                                Spacer()
+                                ProgressView("Loading weather data...")
+                                Spacer()
+                            }.padding()
+                        } else if let error = weatherService.errorMessage {
+                            Text("Error: \(error)")
+                                .foregroundStyle(Color.red)
+                                .padding()
                         }
                     }.onAppear{
                         locationManager.requestLocation()
                     }
                     .onReceive(locationManager.$location) {location in
                         guard let location = location else {return}
-                        fetchWeatherData(for: location)
+                        weatherService.fetchAllWeatherDataForJakarta()
                     }
                     
                 }.frame(height: 172)
@@ -133,7 +124,7 @@ struct OverviewENV: View {
                     }
                     
                 }.frame(height: 200).padding(.top,25)
-            }.padding(.top,30)
+            }.padding(.top,25)
         }
     }
 }

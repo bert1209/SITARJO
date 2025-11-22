@@ -9,18 +9,18 @@ import Combine
 import CoreLocation
 
 class WeatherService: ObservableObject {
-    static let shared = WeatherService() // Singleton pattern
+    static let shared = WeatherService()
     
     @Published var weatherData: WeatherData?
     @Published var oneCallData: ProcessedWeatherData?
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
     
-    private let apiKey1 = "99229bff95270ae2fa6829889ca0e524"
-    private let apiKey2 = "4fe9f9b874734260079cd8ca5513f442"
+    private let apiKey1 = "APIKEY"
+    private let apiKey2 = "APIKEY"
     private var cancellables = Set<AnyCancellable>()
     
-    private init() {} // Private init untuk singleton
+    private init() {} 
     
     func fetchWeatherData(for location: CLLocation) {
         isLoading = true
@@ -242,7 +242,6 @@ class WeatherService: ObservableObject {
         private func processOneCallData(_ response: OneCallResponse) -> ProcessedWeatherData {
             let uvIndex = response.current.uvi
             
-            // Current rain chance (jika ada rain data, anggap 100%, jika tidak cek weather condition)
             let currentRainChance: Double
             if response.current.rain != nil {
                 currentRainChance = 1.0

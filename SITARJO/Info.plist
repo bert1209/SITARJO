@@ -8,5 +8,12 @@
 	</array>
 	<key>NSAppTransportSecurity</key>
 	<dict/>
+	<key>UILaunchScreen</key>
+	<dict>
+		<key>UIImageName</key>
+		<string>LOGO 1</string>
+		<key>UILaunchScreen</key>
+		<dict/>
+	</dict>
 </dict>
 </plist>

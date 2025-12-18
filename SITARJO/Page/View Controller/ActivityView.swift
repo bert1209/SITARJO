@@ -21,7 +21,8 @@ struct ActivityView: View {
                     Picker("Pilih tampilan", selection: $selectedSegment){
                         Text("Overview").tag(0)
                         Text("Analytics").tag(1)
-                        Text("History").tag(2)
+                        Text("Notes").tag(2)
+                        Text("History").tag(3)
                     }
                     .pickerStyle(.segmented)
                     .padding(.vertical,8)
@@ -32,6 +33,8 @@ struct ActivityView: View {
                     } else if selectedSegment == 1 {
                         AnalyticsACT()
                     } else if selectedSegment == 2 {
+                        NotesACT()
+                    } else if selectedSegment == 3 {
                         HistoryACT()
                     }
                 }.padding(.horizontal,16).padding(.top,8).padding(.bottom,0)

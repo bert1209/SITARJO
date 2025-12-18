@@ -10,7 +10,7 @@ import CoreLocation
 
 struct WeatherENV: View {
     
-    @State private var coolTempIsOn: Bool = false
+//    @State private var coolTempIsOn: Bool = false
     @StateObject private var locationManager = LocationManager()
 //    @State private var weatherData: WeatherData?
     @StateObject private var weatherService = WeatherService.shared
@@ -150,14 +150,15 @@ struct WeatherENV: View {
                                     RoundedRectangle(cornerRadius: 10).stroke(Color.blue, lineWidth: 1).fill(Color.blue.opacity(0.2))
                                     
                                     HStack{
+                                        Spacer()
                                         Image(systemName: "cloud.heavyrain").padding(.vertical,1).foregroundStyle(Color.blue)
                                         VStack(alignment: .leading){
                                             Text("Auto-Retract on Rain").font(.system(size: 16))
                                         }
                                         Spacer()
-                                        Toggle(isOn: $coolTempIsOn){
-                                            
-                                        }.padding().scaleEffect(0.7).frame(width: 32 ,height: 18.5)
+//                                        Toggle(isOn: $coolTempIsOn){
+//                                            
+//                                        }.padding().scaleEffect(0.7).frame(width: 32 ,height: 18.5)
                                     }.padding(.horizontal,16)
                                     
                                 }.padding(.horizontal,16).padding(.top,8).frame(height: 60)
@@ -183,7 +184,7 @@ struct WeatherENV: View {
                 }
                 .onReceive(locationManager.$location) {location in
                     guard let location = location else {return}
-                    weatherService.fetchAllWeatherData(for: location)
+                    weatherService.fetchAllWeatherDataForJakarta()
                 }
             }
         }

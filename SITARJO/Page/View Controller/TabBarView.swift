@@ -23,7 +23,7 @@ struct TabBarView: View {
                     Label("Activity", systemImage: "waveform.path.ecg")
                 }
                 SettingsPage().tabItem{
-                    Label("Settings", systemImage: "gearshape")
+                    Label("Device", systemImage: "info.circle")
                 }
                 
             }.toolbarBackground(.white, for: .tabBar)

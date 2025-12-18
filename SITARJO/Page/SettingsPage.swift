@@ -13,18 +13,18 @@ struct SettingsPage: View {
       
                 ScrollView (){
                     VStack (alignment: .leading){
-                        Text("Settings").font(.system(size: 24))
-                        Text("Configure your clothesline system")
+                        Text("Information").font(.system(size: 24))
+                        Text("Smart clothesline system")
                         
                         ZStack(alignment: .topLeading){
                             RoundedRectangle(cornerRadius: 14).stroke(Color.stroke, lineWidth: 1.11).fill(Color.white)
                             
                             VStack(alignment: .leading){
                                 HStack{
-                                    Image(systemName: "powermeter").foregroundStyle(Color.blue)
-                                    Text("Basic Control")
+                                    Image(systemName: "info.circle").foregroundStyle(Color.blue)
+                                    Text("Application Info")
                                     
-                                }.padding(EdgeInsets(top: 25, leading: 34, bottom: 16, trailing: 34))
+                                }.padding(EdgeInsets(top: 25, leading: 16, bottom: 16, trailing: 34))
                                
                                 
                                 ZStack(alignment: .leading){

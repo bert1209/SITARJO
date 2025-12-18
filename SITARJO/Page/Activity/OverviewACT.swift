@@ -60,9 +60,8 @@ struct OverviewACT: View {
                                                     Text("Operations:").font(.system(size: 14)).foregroundStyle(Color.abuTulisan)
                                                 }
                                                 Spacer()
-                                                Text("47").font(.system(size: 24)).foregroundStyle(Color.black).fontWeight(.bold)
-                                                Spacer()
-                                                Text("+3 from yesterday").font(.system(size: 12)).foregroundStyle(Color.abuTulisan)
+                                                Text(String(format: "%d", data.total_operations_today)).font(.system(size: 24)).foregroundStyle(Color.black).fontWeight(.bold)
+                                               
                                             }
                                             Spacer()
                                             VStack(alignment: .leading){
@@ -96,12 +95,11 @@ struct OverviewACT: View {
                                                 Spacer()
                                                 HStack{
                                                     Image(systemName: "stopwatch").foregroundStyle(Color.orange)
-                                                    Text("Avg Duration").font(.system(size: 14)).foregroundStyle(Color.abuTulisan)
+                                                    Text("Total Duration").font(.system(size: 14)).foregroundStyle(Color.abuTulisan)
                                                 }
                                                 Spacer()
-                                                Text("42s").font(.system(size: 24)).foregroundStyle(Color.black).fontWeight(.bold)
-                                                Spacer()
-                                                Text("-2 improvement").font(.system(size: 12)).foregroundStyle(Color.abuTulisan)
+                                                Text(String(format: "%.1f s", data.totalDuration)).font(.system(size: 24)).foregroundStyle(Color.black).fontWeight(.bold)
+                                                
                                             }
                                             Spacer()
                                             VStack(alignment: .leading){
@@ -148,16 +146,15 @@ struct OverviewACT: View {
                                         Image(systemName: "circle.fill").foregroundStyle(Color.blue)
                                         Text("Manual Controls")
                                         Spacer()
-                                        Text("35")
-                                        Text("74%").font(.system(size: 14)).foregroundStyle(Color.abuTulisan)
+                                        Text("\(data.manual_actions_today)")
+                                        
                                     }.padding(.horizontal, geometry.size.width * 0.04)
                                     Spacer()
                                     HStack{
                                         Image(systemName: "circle.fill").foregroundStyle(Color.green)
                                         Text("Smart Automation")
                                         Spacer()
-                                        Text("12")
-                                        Text("36%").font(.system(size: 14)).foregroundStyle(Color.abuTulisan)
+                                        Text("\(data.auto_actions_today)")
                                     }.padding(.horizontal, geometry.size.width * 0.04)
                                     Spacer()
                                     
@@ -193,50 +190,6 @@ struct OverviewACT: View {
                             
                             Spacer()
                             
-                            ZStack(alignment: .topLeading){
-                                RoundedRectangle(cornerRadius: 10).stroke(Color.stroke, lineWidth: 1).fill(Color.white)
-                                VStack(alignment: .leading){
-                                    Spacer()
-                                    HStack{
-                                        Image("wind")
-                                        Text("Enviromental Triggers").font(.system(size: 16))
-                                    }.padding(.horizontal, geometry.size.width * 0.04).padding(.bottom, geometry.size.width * 0.04)
-                                    Spacer()
-                                    HStack{
-                                        Image(systemName: "target").foregroundStyle(Color.purple)
-                                        Text("Manual Controls")
-                                        Spacer()
-                                        Text("35")
-                                        Text("74%").font(.system(size: 14)).foregroundStyle(Color.abuTulisan)
-                                    }.padding(.horizontal, geometry.size.width * 0.04)
-                                    Spacer()
-                                    HStack{
-                                        Image(systemName: "cloud.heavyrain").foregroundStyle(Color.blue)
-                                        Text("Smart Automation")
-                                        Spacer()
-                                        Text("8")
-                                        Text("17%").font(.system(size: 14)).foregroundStyle(Color.abuTulisan)
-                                    }.padding(.horizontal, geometry.size.width * 0.04)
-                                    Spacer()
-                                    HStack{
-                                        Image("wind").foregroundStyle(Color.blue)
-                                        Text("Wind Alert")
-                                        Spacer()
-                                        Text("3")
-                                        Text("6%").font(.system(size: 14)).foregroundStyle(Color.abuTulisan)
-                                    }.padding(.horizontal, geometry.size.width * 0.04)
-                                    Spacer()
-                                    HStack{
-                                        Image(systemName: "clock").foregroundStyle(Color.orange)
-                                        Text("Schedule")
-                                        Spacer()
-                                        Text("1")
-                                        Text("3%").font(.system(size: 14)).foregroundStyle(Color.abuTulisan)
-                                    }.padding(.horizontal, geometry.size.width * 0.04)
-                                    Spacer()
-                                }
-                                
-                            }.frame(height: geometry.size.height * 0.4).padding(.top,geometry.size.height * 0.040)
                             
                             Spacer()
                             

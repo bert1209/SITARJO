@@ -97,33 +97,33 @@ struct OverviewENV: View {
                     
                 }.frame(height: 172)
                 
-                ZStack(alignment: .topLeading){
-                    RoundedRectangle(cornerRadius: 14).stroke(Color.stroke, lineWidth: 1.11).fill(Color.white)
-                    VStack(alignment: .leading){
-                        Text("Enviromental Controls").padding(.leading,16).padding(.top,25)
-                        
-                        HStack{
-                            VStack(alignment: .leading){
-                                Text("Auto-Retract on High Temp").font(.system(size: 14))
-                                Text("Current threshold: 25°C").font(.system(size: 12)).foregroundStyle(Color.gray)
-                            }.frame(width: 200, alignment: .leading)
-                            Toggle(isOn: $tempIsOn){
-                                
-                            }.scaleEffect(0.7).padding()
-                        }.padding(.leading,16)
-                        HStack{
-                            VStack(alignment: .leading){
-                                Text("Auto-Retract on Rain").font(.system(size: 14))
-                                Text("Activates when rain detected").font(.system(size: 12)).foregroundStyle(Color.gray).lineLimit(1)
-                            }.frame(width: 200, alignment: .leading)
-                            Toggle(isOn: $rainIsOn){
-                                
-                            }.padding().scaleEffect(0.7)
-                        }.padding(.leading,16)
-                        
-                    }
-                    
-                }.frame(height: 200).padding(.top,25)
+//                ZStack(alignment: .topLeading){
+//                    RoundedRectangle(cornerRadius: 14).stroke(Color.stroke, lineWidth: 1.11).fill(Color.white)
+//                    VStack(alignment: .leading){
+//                        Text("Enviromental Controls").padding(.leading,16).padding(.top,25)
+//                        
+//                        HStack{
+//                            VStack(alignment: .leading){
+//                                Text("Auto-Retract on High Temp").font(.system(size: 14))
+//                                Text("Current threshold: 25°C").font(.system(size: 12)).foregroundStyle(Color.gray)
+//                            }.frame(width: 200, alignment: .leading)
+//                            Toggle(isOn: $tempIsOn){
+//                                
+//                            }.scaleEffect(0.7).padding()
+//                        }.padding(.leading,16)
+//                        HStack{
+//                            VStack(alignment: .leading){
+//                                Text("Auto-Retract on Rain").font(.system(size: 14))
+//                                Text("Activates when rain detected").font(.system(size: 12)).foregroundStyle(Color.gray).lineLimit(1)
+//                            }.frame(width: 200, alignment: .leading)
+//                            Toggle(isOn: $rainIsOn){
+//                                
+//                            }.padding().scaleEffect(0.7)
+//                        }.padding(.leading,16)
+//                        
+//                    }
+//                    
+//                }.frame(height: 200).padding(.top,25)
             }.padding(.top,25)
         }
     }

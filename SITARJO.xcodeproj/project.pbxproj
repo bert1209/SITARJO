@@ -6,6 +6,15 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		05CC9A0A2EDA9B9B006EB12B /* Auth in Frameworks */ = {isa = PBXBuildFile; productRef = 05CC9A092EDA9B9B006EB12B /* Auth */; };
+		05CC9A0C2EDA9B9B006EB12B /* Functions in Frameworks */ = {isa = PBXBuildFile; productRef = 05CC9A0B2EDA9B9B006EB12B /* Functions */; };
+		05CC9A0E2EDA9B9B006EB12B /* PostgREST in Frameworks */ = {isa = PBXBuildFile; productRef = 05CC9A0D2EDA9B9B006EB12B /* PostgREST */; };
+		05CC9A102EDA9B9B006EB12B /* Realtime in Frameworks */ = {isa = PBXBuildFile; productRef = 05CC9A0F2EDA9B9B006EB12B /* Realtime */; };
+		05CC9A122EDA9B9B006EB12B /* Storage in Frameworks */ = {isa = PBXBuildFile; productRef = 05CC9A112EDA9B9B006EB12B /* Storage */; };
+		05CC9A152EDA9BAB006EB12B /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 05CC9A142EDA9BAB006EB12B /* Supabase */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		05314D732E94EAE30003F107 /* SITARJO.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SITARJO.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,6 +45,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				05CC9A0E2EDA9B9B006EB12B /* PostgREST in Frameworks */,
+				05CC9A0C2EDA9B9B006EB12B /* Functions in Frameworks */,
+				05CC9A152EDA9BAB006EB12B /* Supabase in Frameworks */,
+				05CC9A0A2EDA9B9B006EB12B /* Auth in Frameworks */,
+				05CC9A122EDA9B9B006EB12B /* Storage in Frameworks */,
+				05CC9A102EDA9B9B006EB12B /* Realtime in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -46,6 +61,7 @@
 			isa = PBXGroup;
 			children = (
 				05314D752E94EAE30003F107 /* SITARJO */,
+				05CC9A132EDA9BAB006EB12B /* Frameworks */,
 				05314D742E94EAE30003F107 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -56,6 +72,13 @@
 				05314D732E94EAE30003F107 /* SITARJO.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		05CC9A132EDA9BAB006EB12B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -78,6 +101,12 @@
 			);
 			name = SITARJO;
 			packageProductDependencies = (
+				05CC9A092EDA9B9B006EB12B /* Auth */,
+				05CC9A0B2EDA9B9B006EB12B /* Functions */,
+				05CC9A0D2EDA9B9B006EB12B /* PostgREST */,
+				05CC9A0F2EDA9B9B006EB12B /* Realtime */,
+				05CC9A112EDA9B9B006EB12B /* Storage */,
+				05CC9A142EDA9BAB006EB12B /* Supabase */,
 			);
 			productName = SITARJO;
 			productReference = 05314D732E94EAE30003F107 /* SITARJO.app */;
@@ -107,6 +136,9 @@
 			);
 			mainGroup = 05314D6A2E94EAE30003F107;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				05CC9A082EDA9B9B006EB12B /* XCRemoteSwiftPackageReference "supabase-swift" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 05314D742E94EAE30003F107 /* Products */;
 			projectDirPath = "";
@@ -272,7 +304,6 @@
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location to provide current Weather Info";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -303,7 +334,6 @@
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location to provide current Weather Info";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -341,6 +371,50 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		05CC9A082EDA9B9B006EB12B /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase-community/supabase-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		05CC9A092EDA9B9B006EB12B /* Auth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 05CC9A082EDA9B9B006EB12B /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Auth;
+		};
+		05CC9A0B2EDA9B9B006EB12B /* Functions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 05CC9A082EDA9B9B006EB12B /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Functions;
+		};
+		05CC9A0D2EDA9B9B006EB12B /* PostgREST */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 05CC9A082EDA9B9B006EB12B /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = PostgREST;
+		};
+		05CC9A0F2EDA9B9B006EB12B /* Realtime */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 05CC9A082EDA9B9B006EB12B /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Realtime;
+		};
+		05CC9A112EDA9B9B006EB12B /* Storage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 05CC9A082EDA9B9B006EB12B /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Storage;
+		};
+		05CC9A142EDA9BAB006EB12B /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 05CC9A082EDA9B9B006EB12B /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 05314D6B2E94EAE30003F107 /* Project object */;
 }

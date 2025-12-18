@@ -85,29 +85,7 @@ struct TempratureENV: View {
                                 .padding(.horizontal,16)
                             Text("Clothesline will automatically retract when temperature exceeds this value").foregroundStyle(Color.abuTulisan).font(.system(size: 12)).padding(.horizontal,16)
                             
-                            VStack(alignment: .leading){
-                                
-                                HStack{
-                                    VStack(alignment: .leading){
-                                        Text("Auto-Retract on High Temp").font(.system(size: 14))
-                                        Text("Automatically retract when temperature is too high").font(.system(size: 12)).foregroundStyle(Color.gray)
-                                    }.frame(width: 200, alignment: .leading)
-                                    Toggle(isOn: $highTempIsOn){
-                                        
-                                    }.scaleEffect(0.7).padding()
-                                }.padding(.horizontal,16)
-                                HStack{
-                                    VStack(alignment: .leading){
-                                        Text("Auto-Retract on Cool Temp").font(.system(size: 14))
-                                        Text("Automatically extend when temperature is optimal").font(.system(size: 12)).foregroundStyle(Color.gray)
-                                    }.frame(width: 200, alignment: .leading)
-                                    Toggle(isOn: $coolTempIsOn){
-                                        
-                                    }.padding().scaleEffect(0.7)
-                                }.padding(.horizontal,16)
-                                
-                            }
-                            
+                  
                             ZStack(alignment: .topLeading){
                                 RoundedRectangle(cornerRadius: 10).fill(Color.abuContainer.opacity(0.5))
                                 
@@ -154,7 +132,7 @@ struct TempratureENV: View {
                         weatherService.fetchWeatherDataForJakarta()
                     }
                     
-                }.frame(height: 570)
+                }.frame(height: 420)
             }.padding(.top,10)
         }
       

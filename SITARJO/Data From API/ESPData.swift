@@ -54,6 +54,10 @@ struct ESPData: Codable {
     var efficiency: Double {
         return Double(auto_actions_today / total_operations_today * 100)
     }
+    
+    var totalDuration : Double {
+        return Double (total_operations_today * 5)
+    }
 }
 
 // MARK: - Response untuk debugging

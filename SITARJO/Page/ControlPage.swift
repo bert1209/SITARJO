@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ControlPage: View {
     
-    @State var progress = 0.0
+    @State var progress = 300.0
     @State private var windIsOn: Bool = false
     @State private var rainIsOn: Bool = false
     @State private var sunIsOn: Bool = false
@@ -94,32 +94,34 @@ struct ControlPage: View {
                                 }, label: {
                                     ZStack{
                                         RoundedRectangle(cornerRadius: 8)
-                                            .fill(Color.blue)
+                                            .fill(data.mode == "MANUAL" ? Color.blue : Color.gray.opacity(0.2))
                                             .frame(width: 70, height: 20)
-                                        
+
                                         VStack{
-                                            Text("Manual").foregroundStyle(Color.white).font(.system(size: 12)).padding(.top,1)
+                                            Text("Manual")
+                                                .foregroundColor(data.mode == "MANUAL" ? .white : .black)
+                                                .font(.system(size: 12))
+                                                .padding(.top, 1)
                                         }
                                     }
-                                    
-                                }
-                                )
+                                })
                                 
                                 Button(action: {
                                     self.changeMode(to: .smartAuto)
                                 }, label: {
                                     ZStack{
                                         RoundedRectangle(cornerRadius: 8)
-                                            .fill(Color.blue)
+                                            .fill(data.mode == "SMART_AUTO" ? Color.blue : Color.gray.opacity(0.2))
                                             .frame(width: 70, height: 20)
-                                        
+
                                         VStack{
-                                            Text("Auto").foregroundStyle(Color.white).font(.system(size: 12)).padding(.top,1)
+                                            Text("Auto")
+                                                .foregroundColor(data.mode == "SMART_AUTO" ? .white : .black)
+                                                .font(.system(size: 12))
+                                                .padding(.top, 1)
                                         }
                                     }
-                                    
-                                }
-                                )
+                                })
                                 
                                 
                             }.padding(EdgeInsets(top: 25, leading: 34, bottom: 16, trailing: 34))
@@ -143,7 +145,9 @@ struct ControlPage: View {
                             
                             HStack{
                                 Button(action: {
-                                    sendAction(command: .dorong)
+                                    if (data.mode == "MANUAL"){
+                                        sendAction(command: .dorong)
+                                    }
                                 }, label: {
                                     ZStack{
                                         RoundedRectangle(cornerRadius: 8)
@@ -159,7 +163,9 @@ struct ControlPage: View {
                                 }
                                 )
                                 Button(action: {
-                                    sendAction(command: .tarik)
+                                    if (data.mode == "MANUAL"){
+                                        sendAction(command: .tarik)
+                                    }
                                 }, label: {
                                     ZStack{
                                         RoundedRectangle(cornerRadius: 8)
@@ -220,7 +226,7 @@ struct ControlPage: View {
                                         VStack(alignment: .leading) {
                                             VStack(alignment: .leading){
                                                 Text("Auto Actions:").font(.system(size: 14)).foregroundStyle(Color.abuTulisan)
-                                                Text(String(format: "%.d Today", data.auto_actions_today)).font(.system(size: 16))
+                                                Text(String(format: "%d Today", data.auto_actions_today)).font(.system(size: 16))
                                             }
                                             Spacer()
                                             VStack(alignment: .leading) {
@@ -234,8 +240,8 @@ struct ControlPage: View {
                                             }
                                             Spacer()
                                             VStack(alignment: .leading) {
-                                                Text("Timer:").font(.system(size: 14)).foregroundStyle(Color.abuTulisan)
-                                                Text("Off").font(.system(size: 16))
+                                                Text("Lux").font(.system(size: 14)).foregroundStyle(Color.abuTulisan)
+                                                Text("\(data.raw_lux)").font(.system(size: 16))
                                             }
                                             
                                         }
@@ -273,62 +279,62 @@ struct ControlPage: View {
                     
                 }.frame(height: 525)
                 
-                ZStack(alignment: .topLeading){
-                    RoundedRectangle(cornerRadius: 14).stroke(Color.stroke, lineWidth: 1.11).fill(Color.white)
-                    VStack(alignment: .leading){
-                        HStack{
-                            Image("setting")
-                            Text("Quick Setting")
-                        }.padding(EdgeInsets(top: 25, leading: 34, bottom: 16, trailing: 0))
-                        
-                        Text("Enviromental Protection").padding(.leading,34)
-                        
-                        HStack{
-                            Image("wind")
-                            VStack(alignment: .leading){
-                                Text("Wind Detection").font(.system(size: 14))
-                                Text("Auto-retract on strong winds").font(.system(size: 12)).foregroundStyle(Color.gray)
-                            }.frame(width: 200, alignment: .leading)
-                            Toggle(isOn: $windIsOn){
-                                
-                            }.scaleEffect(0.7).padding()
-                        }.padding(.leading,34)
-                        HStack{
-                            Image("rain")
-                            VStack(alignment: .leading){
-                                Text("Rain Detection").font(.system(size: 14))
-                                Text("Auto-retract on rain detection").font(.system(size: 12)).foregroundStyle(Color.gray).lineLimit(1)
-                            }.frame(width: 200, alignment: .leading)
-                            Toggle(isOn: $rainIsOn){
-                                
-                            }.padding().scaleEffect(0.7)
-                        }.padding(.leading,34)
-                        
-                        Text("Scheduling").padding(.leading,34)
-                        
-                        HStack{
-                            Image("sun")
-                            VStack(alignment: .leading){
-                                Text("Solar Schedule").font(.system(size: 14))
-                                Text("Extend during optimal sun hours").font(.system(size: 12)).foregroundStyle(Color.gray)
-                            }.frame(width: 200, alignment: .leading)
-                            Toggle(isOn: $sunIsOn){
-                                
-                            }.padding().scaleEffect(0.7)
-                        }.padding(.leading,34)
-                        HStack{
-                            Image("night")
-                            VStack(alignment: .leading){
-                                Text("Night Mode").font(.system(size: 14))
-                                Text("Auto-retract at sunset").font(.system(size: 12)).foregroundStyle(Color.gray)
-                            }.frame(width: 200, alignment: .leading)
-                            Toggle(isOn: $nightIsOn){
-                                
-                            }.padding().scaleEffect(0.7)
-                        }.padding(.leading,34)
-                    }
-                    
-                }.frame(height: 420)
+//                ZStack(alignment: .topLeading){
+//                    RoundedRectangle(cornerRadius: 14).stroke(Color.stroke, lineWidth: 1.11).fill(Color.white)
+//                    VStack(alignment: .leading){
+//                        HStack{
+//                            Image("setting")
+//                            Text("Quick Setting")
+//                        }.padding(EdgeInsets(top: 25, leading: 34, bottom: 16, trailing: 0))
+//                        
+//                        Text("Enviromental Protection").padding(.leading,34)
+//                        
+//                        HStack{
+//                            Image("wind")
+//                            VStack(alignment: .leading){
+//                                Text("Wind Detection").font(.system(size: 14))
+//                                Text("Auto-retract on strong winds").font(.system(size: 12)).foregroundStyle(Color.gray)
+//                            }.frame(width: 200, alignment: .leading)
+//                            Toggle(isOn: $windIsOn){
+//                                
+//                            }.scaleEffect(0.7).padding()
+//                        }.padding(.leading,34)
+//                        HStack{
+//                            Image("rain")
+//                            VStack(alignment: .leading){
+//                                Text("Rain Detection").font(.system(size: 14))
+//                                Text("Auto-retract on rain detection").font(.system(size: 12)).foregroundStyle(Color.gray).lineLimit(1)
+//                            }.frame(width: 200, alignment: .leading)
+//                            Toggle(isOn: $rainIsOn){
+//                                
+//                            }.padding().scaleEffect(0.7)
+//                        }.padding(.leading,34)
+//                        
+//                        Text("Scheduling").padding(.leading,34)
+//                        
+//                        HStack{
+//                            Image("sun")
+//                            VStack(alignment: .leading){
+//                                Text("Solar Schedule").font(.system(size: 14))
+//                                Text("Extend during optimal sun hours").font(.system(size: 12)).foregroundStyle(Color.gray)
+//                            }.frame(width: 200, alignment: .leading)
+//                            Toggle(isOn: $sunIsOn){
+//                                
+//                            }.padding().scaleEffect(0.7)
+//                        }.padding(.leading,34)
+//                        HStack{
+//                            Image("night")
+//                            VStack(alignment: .leading){
+//                                Text("Night Mode").font(.system(size: 14))
+//                                Text("Auto-retract at sunset").font(.system(size: 12)).foregroundStyle(Color.gray)
+//                            }.frame(width: 200, alignment: .leading)
+//                            Toggle(isOn: $nightIsOn){
+//                                
+//                            }.padding().scaleEffect(0.7)
+//                        }.padding(.leading,34)
+//                    }
+//                    
+//                }.frame(height: 420)
                 
             }.padding(.horizontal,16)
                 .padding(.vertical,14)

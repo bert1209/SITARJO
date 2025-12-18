@@ -86,7 +86,7 @@ import Foundation
 class ApiService {
     static let shared = ApiService()
     
-    private let esp32BaseURL = "http://10.198.65.123"
+    private let esp32BaseURL = "http://sitarjo.local"
     
     private init() {}
 
